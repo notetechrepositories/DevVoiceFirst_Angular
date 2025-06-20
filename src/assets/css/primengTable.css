@@ -1,0 +1,35 @@
+.table-card{
+    background: #fff;
+    padding: 20px;
+    border-radius: 13px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.p-datatable,
+.p-datatable-thead > tr > th,
+.p-datatable-tbody > tr > td,
+.p-inputtext {
+  font-size: 0.85rem;
+}
+
+.p-datatable-tbody > tr{
+    border-bottom: 1px solid #eeeeee;
+    bottom: 0;
+}
+
+.p-datatable .p-paginator{
+    font-size: 0.75rem;
+}
+
+.p-datatable .p-component{
+    font-size: 0.75rem;
+}
+
+.p-dropdown .p-dropdown-trigger {
+    background: transparent;
+    color: #6b7280;
+    width: 2rem;
+    font-size: .85rem;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}

@@ -1,0 +1,175 @@
+
+
+<div class="table-card mt-2">
+    <div class="mb-4 mt-2">
+      <h3>Reported Issue</h3>
+    </div>
+  
+    <div class="mb-3">
+      <div class="row w-100">
+        <div class="col-md-2"> 
+          <p-iconField iconPosition="left">
+            <p-inputIcon><i class="pi pi-search"></i></p-inputIcon>
+            <input 
+              pInputText 
+              type="text" 
+              class="search-box"
+              placeholder="Search keyword"
+              [(ngModel)]="globalFilter"
+              (input)="applyGlobalFilter()" />
+          </p-iconField>
+        </div>
+    
+        <div class="col-md-2">
+          <p-calendar [(ngModel)]="startDate"  placeholder="Start Date" [ngStyle]="{'width':'237px'}"/>
+        </div>
+    
+        <div class="col-md-2">
+          <p-calendar [(ngModel)]="endDate"  placeholder="End Date"/>
+        </div>
+    
+        <div class="col-md-2 d-flex gap-2">
+          <button class="btn flex-fill" (click)="applyGlobalFilter()">Filter</button>
+          <button class="btn flex-fill" (click)="clearDateFilter()">Clear</button>
+        </div>
+    
+        <div class="col-md-8 d-flex justify-content-end">
+          
+        </div>
+      </div>
+      <div class="text-end">
+        <button class="btn-primary me-2" (click)="generatePdfReport()"><i class="fa-solid fa-file-pdf"></i></button>
+        <button class="btn-primary" (click)="generatedocReport()"><i class="fa-solid fa-file-word"></i></button>
+      </div>
+  
+    </div>
+  
+    <p-table
+        #dt2
+        [value]="issues"
+        [paginator]="true"
+        [rows]="rows"
+        [first]="first"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        (onPage)="pageChange($event)"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        class="table"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:23%">Date</th>
+                <th style="width:23%">Issue Type</th>
+                <th style="width:23%">Branch</th>
+                <th style="width:23%">Section</th>
+                <th style="width:23%">Status</th>
+                <th style="width:23%"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-issue>
+          <tr>
+            <td>{{ issue.submited_date }}</td>
+            <td>{{ issue.t9_issue_name }}</td>
+            <td>{{ issue.t2_company_branch_name }}</td>
+            <td>{{ issue.t3_section_name }}</td>
+
+            <td> 
+              <span (click)="cycleStatus(issue)" style="cursor: pointer;">
+                <p-tag [severity]="getStatusSeverity(issue.current_status)">
+                  {{ issue.current_status | titlecase }}
+                </p-tag>
+              </span>
+            </td>
+            
+            <td>
+              <i class="pi pi-eye me-3"  (click)="viewIssue(issue)"> </i>
+             
+       
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">No data available</td>
+          </tr>
+        </ng-template>
+    </p-table>
+  </div>
+  
+  
+
+  
+  <p-toast />
+  <p-confirmPopup />
+  
+  <!-- pop up -->
+
+  <p-dialog 
+  [(visible)]="viewPopupVisible"
+  [modal]="true"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  header="Issue Details">
+  
+  <div *ngIf="selectedIssue" class="container py-4">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-primary mb-3">Issue Details</h5>
+
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <p><strong>Submitted By:</strong> {{ selectedIssue.submited_by_details.first_name }} {{ selectedIssue.submited_by_details.last_name }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Date:</strong> {{ selectedIssue.submited_date }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <p><strong>Issue Type:</strong> {{ selectedIssue.t9_issue_name }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Status:</strong> 
+              <p-tag [severity]="getStatusSeverity(selectedIssue.current_status)">
+                {{ selectedIssue.current_status | titlecase }}
+              </p-tag>
+            </p>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label><strong>Issue Description:</strong></label>
+          <div class="bg-light p-3 border rounded">{{ selectedIssue.issue_text }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media Attachments -->
+    <div *ngIf="selectedIssue.media?.length" class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title mb-3 text-secondary">Media Attachments</h6>
+        <div class="row g-3">
+          <div class="row g-3">
+            <div *ngFor="let media of selectedIssue.media" class="col-md-4 d-flex">
+              <div class="border rounded overflow-hidden p-2 bg-light w-100 h-100 d-flex flex-column">
+                <ng-container *ngIf="media.media_type === 'image'; else videoBlock">
+                  <img [src]="media.file_path" alt="image" class="img-fluid rounded mb-auto" style="object-fit: cover; height: 100%; width: 100%;" />
+                </ng-container>
+          
+                <ng-template #videoBlock>
+                  <video controls class="w-100 rounded mb-auto" style="object-fit: cover; height: 100%;">
+                    <source [src]="media.file_path" type="video/mp4">
+                    Your browser does not support the video tags.
+                  </video>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</p-dialog>

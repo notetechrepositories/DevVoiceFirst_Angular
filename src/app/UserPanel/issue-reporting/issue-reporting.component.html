@@ -1,0 +1,197 @@
+<section class="hero-section">
+  <img [src]="sectionDetails.company_details.company_logo" alt="" width="200">
+  <h1>{{sectionDetails.company_details.t1_company_name}}</h1>
+  <p style="font-style: italic;font-weight: 500;">{{sectionDetails.t2_section_type}}</p>
+  <h3>{{sectionDetails.branch_details.t2_company_branch_name}}</h3>
+
+</section>
+
+
+<section class="review-section mt-5">
+  <div class="container">
+    <div class="card p-4">
+      <div class="d-flex flex-column justify-content-center bg-white">
+        <div>
+          <h3 class="fw-bold mt-4 text-center">We value your feedback!</h3>
+          <p class="text-center mt-4">"Report any issues or suggest improvements to enhance our system’s functionality.
+            Your insights help us create a better experience for everyone."</p>
+        </div>
+        <div>
+
+          <form class="w-100 p-4">
+            <div class="rvw-card">
+              <div class="row">
+
+
+                <!-- Issue Type -->
+                <div class="col-md-12 mb-3">
+                  <label class="form-label">Issue Type <span class="required_label">*</span></label>
+                  <select class="form-select" (change)="onChangeIssuetype($event)">
+                    <option value="" disabled selected>Select Issue Type</option>
+                    <option *ngFor="let type of issueTypes" [value]="type.t9_issue_type_id">{{ type.t9_issue_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label">Issue Description <span class="required_label">*</span></label>
+                <textarea class="form-control form-control-lg" name="message" id="inputAddress" placeholder="Message"
+                  [(ngModel)]="message" rows="5">
+                              </textarea>
+
+
+                <div class="d-flex justify-content-center mt-3">
+                  <button class="button-18" role="button" (click)="toggleListening()"
+                    [ngClass]="{ 'listening-active': isListening }">
+                    <i class="bx me-2" [ngClass]="isListening ? 'bx bx-stop-circle' : 'bx-microphone'"></i>
+                    {{ isListening ? 'Stop' : 'Start' }}
+                  </button>
+                </div>
+              </div>
+              <!-- <div class="recorder">
+                                        <div>
+                                            <button class="Btn start" (click)="startRecording()" *ngIf="isRecordBtn">
+                                                <div class="sign">
+                                                    <i class='bx bxs-microphone'></i>
+                                                </div>
+                                              </button>
+                                              <button class="Btn stop" (click)="stopRecording()" *ngIf="!isRecordBtn">
+                                                <div class="sign">
+                                                    <i class='bx bx-stop' ></i>
+                                                </div>
+                                              </button>
+                                        </div>
+                                        <div class="wave-card">
+                                            <div class="d-flex" >
+                                                <audio [src]="audioUrl" controls></audio>
+                                                <button class="remove" (click)="deleteRecording()" *ngIf="audioUrl" > <i class="fas fa-times"></i></button>
+                                            </div>  
+                                        </div>
+                                  </div> -->
+            </div>
+
+
+            <!--  -->
+
+            <div class="d-flex justify-content-center" style="margin-top: -5px;">
+              <div class="row g-2 w-100">
+                <div *ngIf="selectedIssueType?.media_requirement">
+                  <div *ngFor="let media of selectedIssueType.media_requirement; let mediaIndex = index"
+                    class="col-md-12 col-sm-12">
+                    <div class="card p-4 mb-4">
+                      <label class="fw-bold">{{ media.t9_1_media_type | titlecase }} Upload</label>
+
+                      <div class="row g-2 w-100">
+
+                        <!-- Standard media uploads -->
+                        <div *ngFor="let req of media.photo_video_requirement; let photoIndex = index"
+                          class="col-md-4 img-thumbs mt-3">
+                          <div class="mb-2"><strong>{{ req.t9_3_description }}</strong></div>
+                          <div>
+                            <label [for]="'upload-' + mediaIndex + '-' + photoIndex" class="custom-file-upload">
+                              <span class="plus-icon">
+                                <i class="bx bxs-image-add" *ngIf="media.t9_1_media_type === 'image'"></i>
+                                <i class="bx bxs-video-plus" *ngIf="media.t9_1_media_type === 'video'"></i>
+                              </span>
+                            </label>
+                            <input type="file" [id]="'upload-' + mediaIndex + '-' + photoIndex"
+                              (change)="onDynamicFileSelected($event, mediaIndex + '-' + photoIndex, media.t9_1_max)"
+                              [accept]="media.t9_1_media_type + '/*'" multiple
+                              [disabled]="(selectedFiles[mediaIndex + '-' + photoIndex]?.length || 0) >= media.t9_1_max"
+                              style="display: none;" />
+                            <small *ngIf="(selectedFiles[mediaIndex + '-' + photoIndex]?.length || 0) >= media.t9_1_max"
+                              class="text-danger">
+                              Maximum of {{ media.t9_1_max }} files uploaded.
+                            </small>
+                          </div>
+
+                          <!-- Preview for images/videos -->
+                          <div class="mt-2">
+                            <div *ngFor="let preview of previews[mediaIndex + '-' + photoIndex] || []; let i = index"
+                              class="wrapper-thumb mb-1">
+                              <ng-container *ngIf="media.t9_1_media_type === 'image'; else videoBlock">
+                                <img [src]="preview.url" class="img-preview-thumb" />
+                              </ng-container>
+                              <ng-template #videoBlock>
+                                <video class="video-preview-thumb" controls>
+                                  <source [src]="preview.url" type="video/mp4" />
+                                  Your browser does not support videos.
+                                </video>
+                              </ng-template>
+                              <span class="remove-btn" (click)="removeDynamicFile(i, mediaIndex + '-' + photoIndex)">
+                                <i class="fas fa-times-circle"></i>
+                              </span>
+                            </div>
+                            <div *ngIf="(previews[mediaIndex + '-' + photoIndex]?.length || 0) === 0" class="no-file">
+                              <p class="text-center">No file selected</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Others -->
+                        <div *ngIf="media.photo_video_requirement.length < media.t9_1_max"
+                          class="col-md-4 img-thumbs mt-3">
+                          <div class="mb-2"><strong>Others</strong></div>
+                          <div>
+                            <label [for]="'upload-' + mediaIndex + '-others'" class="custom-file-upload">
+                              <span class="plus-icon">
+                                <i class="bx bxs-image-add" *ngIf="media.t9_1_media_type === 'image'"></i>
+                                <i class="bx bxs-video-plus" *ngIf="media.t9_1_media_type === 'video'"></i>
+                              </span>
+                            </label>
+                            <input type="file" [id]="'upload-' + mediaIndex + '-others'"
+                              (change)="onDynamicFileSelected($event, mediaIndex + '-others', media.t9_1_max - media.photo_video_requirement.length)"
+                              [accept]="media.t9_1_media_type + '/*'" multiple
+                              [disabled]="(selectedFiles[mediaIndex + '-others']?.length || 0) >= (media.t9_1_max - media.photo_video_requirement.length)"
+                              style="display: none;" />
+                            <small
+                              *ngIf="(selectedFiles[mediaIndex + '-others']?.length || 0) >= (media.t9_1_max - media.photo_video_requirement.length)"
+                              class="text-danger">
+                              Maximum of {{ media.t9_1_max - media.photo_video_requirement.length }} files uploaded.
+                            </small>
+                          </div>
+
+                          <div class="mt-2">
+                            <div *ngFor="let preview of previews[mediaIndex + '-others'] || []; let i = index"
+                              class="wrapper-thumb mb-1">
+                              <ng-container *ngIf="media.t9_1_media_type === 'image'; else videoBlockOthers">
+                                <img [src]="preview.url" class="img-preview-thumb" />
+                              </ng-container>
+                              <ng-template #videoBlockOthers>
+                                <video class="video-preview-thumb" controls>
+                                  <source [src]="preview.url" type="video/mp4" />
+                                  Your browser does not support videos.
+                                </video>
+                              </ng-template>
+                              <span class="remove-btn" (click)="removeDynamicFile(i, mediaIndex + '-others')">
+                                <i class="fas fa-times-circle"></i>
+                              </span>
+                            </div>
+                            <div *ngIf="(previews[mediaIndex + '-others']?.length || 0) === 0" class="no-file">
+                              <p class="text-center">No file selected</p>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--  -->
+            <div class="mt-3">
+              <button type="submit" class="submit-btn w-100" (click)=" submitIssue()">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+<p-toast />

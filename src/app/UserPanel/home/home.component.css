@@ -1,0 +1,95 @@
+.home-banner {
+    min-height: 66.8vh;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* Centers text horizontally */
+    padding: 55px 20px;
+    width: 100%; /* Ensures full width */
+  }
+  
+  .home-banner p{
+      font-style: italic;
+  }
+
+  .container-input {
+    position: relative;
+  }
+  
+  .input {
+    width: 400px;
+    padding: 14px 0px 14px 40px;
+    /* border-radius: 32px 0px 0px 32px; */
+    border-radius:9999px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    transition: all .2s ease-in-out;
+    outline: none;
+    border:none;
+  }
+  
+  .container-input svg {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translate(0, -50%);
+  }
+  
+  .input:focus {
+    opacity: 1;
+    width: 500px;
+    background-color: rgb(255, 255, 255);
+  }
+
+  .suggestion-box {
+    width: 100%;
+    max-width: 590px; /* Prevents excessive stretching */
+    min-height: 50px; /* Ensures visibility even with few results */
+    max-height: 300px; /* Prevents overflow */
+    background: #ffffff; /* Clean white background */
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Subtle border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds depth */
+    overflow-y: auto; /* Enables scroll for more results */
+    padding: 10px;
+    display: block; /* Initially hidden */
+  }
+  
+  /* Individual Suggestion Items */
+  .suggestion-item {
+    text-align: start;
+    padding: 2px 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  /* Last item should not have a border-bottom */
+  .suggestion-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Hover effect */
+  .suggestion-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  /* No Results */
+  .no-results {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  .light-text{
+    color: #bebebe;
+  }
+  
+  .light-text:hover{
+    color: #367AF6;
+  }

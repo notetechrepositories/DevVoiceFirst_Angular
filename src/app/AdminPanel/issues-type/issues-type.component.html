@@ -1,0 +1,127 @@
+
+
+<div class="table-card mt-2">
+    <div class="mb-4 mt-2">
+      <h3>Issue Type</h3>
+    </div>
+  
+    <div class="mb-3">
+      <div class="row w-100">
+        <div class="col-md-4"> 
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input 
+              pInputText 
+              type="text" 
+              class="search-box"
+              placeholder="Search keyword" />
+          </p-iconField>
+        </div>
+    
+        <div class="col-md-8 d-flex justify-content-end">
+          <!-- <p-button class="me-2" icon="pi pi-bookmark" severity="secondary" /> -->
+          <p-button icon="pi pi-plus" pTooltip="Add" tooltipPosition="bottom"  (click)="addIssueType()"/>
+          
+        </div>
+      </div>
+      
+  
+    </div>
+  
+    <p-table
+        #dt2
+        [value]="issuetypes"
+        [paginator]="true"
+        [rows]="rows"
+        [first]="first"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        (onPage)="pageChange($event)"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        class="table"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%">Name</th>
+                <th style="width:25%">Media Type</th>
+                <th style="width:25%">Attachment Requirement</th>
+                <th style="width:25%">Max Size & Number</th>
+                <th style="width:25%"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-issuetype>
+            <tr>
+                <td>{{ issuetype.t9_issue_name }}</td>
+                <td>    <div *ngFor="let media of issuetype.media_requirement">
+                  {{ media.t9_1_media_type }}
+                </div></td>
+                <td>  <div *ngFor="let media of issuetype.media_requirement">
+                  {{ media.t9_1_is_mandatory ? 'Mandatory' : 'Optional' }}
+                </div></td>
+                <td> <div *ngFor="let media of issuetype.media_requirement">
+                  {{ media.t9_1_max_size_mb }} MB, Max: {{ media.t9_1_max }}
+                </div></td>
+                <td class="d-flex">
+                  <i class="pi pi-eye me-3"  (click)="ViewIssueType(issuetype.t9_issue_type_id)"></i>
+                  <i class="pi pi-pen-to-square me-3"  (click)="editIssueType(issuetype)"></i>
+                  <i class="pi pi-trash text-danger"  (click)="deleteIssueType($event, issuetype)"></i>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+  </div>
+  
+
+
+  
+  <p-toast />
+  <p-confirmPopup />
+  <p-dialog 
+  [modal]="true" 
+  [(visible)]="addPopupVisible" 
+  [style]="{ width: '50rem' }" 
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  header="Issue Type Details"
+>
+<div class="container py-4" *ngIf="issuetype">
+  <div class="mb-4 text-center">
+    <h4 class="fw-bold text-primary">{{ issuetype.t9_issue_name }}</h4>
+  </div>
+
+  <div class="row g-4">
+    <div *ngFor="let media of issuetype.media_requirement" class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 text-capitalize">{{ media.t9_1_media_type }}</h6>
+          <span class="badge bg-{{ media.t9_1_is_mandatory ? 'danger' : 'info' }}">
+            {{ media.t9_1_is_mandatory ? 'Mandatory' : 'Optional' }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col">
+              <small class="text-muted">Max Count</small>
+              <div>{{ media.t9_1_max }}</div>
+            </div>
+            <div class="col">
+              <small class="text-muted">Max Size</small>
+              <div>{{ media.t9_1_max_size_mb }} MB</div>
+            </div>
+          </div>
+
+          <div *ngIf="media.photo_video_requirement?.length > 0">
+            <small class="text-muted">Media Requirements:</small>
+            <ul class="mt-1 ps-3">
+              <li *ngFor="let pv of media.photo_video_requirement">
+                {{ pv.t9_3_description }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,33 @@
+<div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 90vh;">
+  <div class="scanner-card shadow p-4 rounded">
+    <h2 class="text-center mb-4">QR Code Scanner</h2>
+
+    <!-- Device Selector -->
+    <div *ngIf="devices.length > 1" class="mb-3 w-100">
+      <label for="cameraSelect" class="form-label">Select Camera:</label>
+      <select id="cameraSelect" class="form-select" [(ngModel)]="selectedDevice">
+        <option *ngFor="let device of devices" [ngValue]="device">{{ device.label }}</option>
+      </select>
+    </div>
+
+    <!-- Scanner Area with Animation -->
+    <div class="scanner-wrapper mb-4">
+      <zxing-scanner
+        class="scanner-video"
+        [device]="selectedDevice"
+        (scanSuccess)="onCodeResult($event)">
+      </zxing-scanner>
+      <div class="scanner-overlay">
+        <div class="scanner-square">
+          <div class="scanner-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanned Result -->
+    <div *ngIf="qrResult" class="alert alert-success w-100 text-center">
+      <strong>Scanned Result:</strong> <br />
+      <span class="text-break">{{ qrResult }}</span>
+    </div>
+  </div>
+</div>

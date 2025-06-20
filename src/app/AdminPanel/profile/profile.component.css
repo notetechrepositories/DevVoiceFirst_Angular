@@ -1,0 +1,29 @@
+.form-control:disabled {
+    background-color: white;
+    opacity: 1;
+}
+.btn-primary{
+    background: var(--primary-color1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 17px;
+}
+
+.btn-view{
+    background: var(--primary-color1);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 17px;
+}
+

@@ -1,0 +1,202 @@
+<div class="table-card mt-2">
+  <div class="mb-4 mt-2">
+    
+    <div class="d-flex justify-content-between">
+      <h2>Company Profile</h2>
+          <button class="btn btn-view" type="button" (click)="enableEdit()" *ngIf="!isedit">
+            <i class="pi pi-pencil"></i>
+          </button>
+          </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Column - Company Logo -->
+    <div class="col-md-4 mb-3 d-flex flex-column align-items-center text-center">
+        <!-- <img [src]="company.company_logo" alt="Company Logo" class="img-fluid rounded-circle "
+        style="width: 400px; height: 380px; object-fit: cover;">        -->
+        <img 
+        [src]="previewLogo ? previewLogo : company.company_logo"
+        alt="Company Logo"
+        class="img-fluid"
+        style="width: 300px; height: 300px; object-fit: cover;">
+      
+          <!-- Edit Icon-->
+        <!-- <label *ngIf="logoedit" class="btn btn-primary mt-2" >
+            Update Logo <i class="pi pi-pencil"></i>
+          <input type="file" accept="image/*" (change)="onLogoSelected($event)" hidden />
+        </label>
+        
+
+        <div *ngIf="previewLogo && !logoedit"  class="d-flex justify-content-center gap-2 mt-2">
+          <button class="btn btn-sm btn-success" (click)="confirmImageUpdate()">Update </button>
+          <button class="btn btn-sm btn-outline-secondary" (click)="cancelImageUpdate()">Cancel</button>
+        </div> -->
+
+                      <div class="col-md text-center d-flex justify-content-center" style="margin-top: -20px;">
+                <div>
+                    <label *ngIf="logoedit" class="btn btn-primary mt-2" >
+                    <i class="pi pi-camera"></i>
+                      <input type="file" accept="image/*" (change)="onLogoSelected($event)" hidden />
+                    </label>
+                
+                      <!-- Preview and confirm -->
+                    <div *ngIf="previewLogo && !logoedit"  class="d-flex justify-content-center gap-2" style="margin-top: 60px;">
+                      <button class="btn btn-sm btn-success" (click)="confirmImageUpdate()">Update </button>
+                      <button class="btn btn-sm btn-outline-secondary" (click)="cancelImageUpdate()">Cancel</button>
+                    </div>
+                </div>
+
+              </div> 
+        <!-- <div class="mt-3">
+          <img *ngIf="qrCodeDataUrl" [src]="qrCodeDataUrl" alt="QR Code" height="200" width="200" />
+          <div class="mt-1">
+            <button class="btn btn-outline-primary btn-sm" (click)="downloadQRCode()" *ngIf="qrCodeDataUrl">
+              <i class="pi pi-download me-2"></i>Download QR
+            </button>
+          </div>
+        </div> -->
+    </div>
+    <!-- Right Column - form -->
+    <div class="col-md-8">
+      <div >
+          
+        <div class="card-body">
+          <form [formGroup]="companyForm" class="row g-3" (ngSubmit)="saveChanges()">
+            <!-- Company Name -->
+            <div class="col-md-12">
+              <label class="form-label">Company Name<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="text" formControlName="t1_company_name" class="form-control" [disabled]="!isedit" placeholder="Enter company name">
+            </div>
+
+            <!-- Company Type -->
+            <div class="col-md-6">
+              <label class="form-label">Company Type<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="text" formControlName="company_type" class="form-control" [disabled]="!isedit" placeholder="Enter company type">
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+              <label class="form-label">Email<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="email" formControlName="t2_email" class="form-control" [disabled]="!isedit" placeholder="Enter email">
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-6">
+              <label class="form-label">Phone<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="text" formControlName="t2_phone_no" class="form-control" [disabled]="!isedit" placeholder="Enter phone">
+            </div>
+
+            <!-- Mobile -->
+            <div class="col-md-6">
+              <label class="form-label">Mobile</label>
+              <input type="text" formControlName="t2_mobile_no" class="form-control" [disabled]="!isedit" placeholder="Enter mobile">
+            </div>
+
+            <!-- Address 1 -->
+            <div class="col-12">
+              <label class="form-label">Address 1<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="text" formControlName="t2_address_1" class="form-control" [disabled]="!isedit" placeholder="Enter address line 1">
+            </div>
+
+            <!-- Address 2 -->
+            <div class="col-12">
+              <label class="form-label">Address 2</label>
+              <input type="text" formControlName="t2_address_2" class="form-control" [disabled]="!isedit" placeholder="Enter address line 2">
+            </div>
+
+            <!-- Country -->
+            <div class="col-md-4">
+              <label class="form-label">Country<span class="text-danger" *ngIf="isedit">*</span></label>
+              <ng-container *ngIf="isedit; else readonlyCountry">
+                <select class="form-control" formControlName="id_t2_1_country" (change)="onCountryChange($event)" [disabled]="!isedit">
+                  <option value="">--Select Country--</option>
+                  <option *ngFor="let c of countries" [value]="c.id_t2_1_country">
+                    {{ c.t2_1_country_name }}
+                  </option>
+                </select>
+              </ng-container>
+              <ng-template #readonlyCountry>
+                <input type="text" class="form-control" [value]="selectedCountry?.t2_1_country_name || 'N/A'" disabled />
+              </ng-template>
+            </div>
+
+            <!-- State -->
+            <div class="col-md-4">
+              <label class="form-label">{{ div1Label }}<span class="text-danger" *ngIf="isedit">*</span></label>
+              <ng-container *ngIf="isedit; else readonlyDiv1">
+                <select class="form-control" formControlName="id_t2_1_div1" (change)="onDiv1Change($event)" [disabled]="!isedit">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let d of div1Options" [value]="d">{{ d }}</option>
+                </select>
+              </ng-container>
+              <ng-template #readonlyDiv1>
+                <input type="text" class="form-control" [value]="company.id_t2_1_div1 || 'N/A'" disabled />
+              </ng-template>
+            </div>
+
+            <!-- District -->
+            <div class="col-md-4">
+              <label class="form-label">{{ div2Label }}<span class="text-danger" *ngIf="isedit">*</span></label>
+              <ng-container *ngIf="isedit; else readonlyDiv2">
+                <select class="form-control" formControlName="id_t2_1_div2" (change)="onDiv2Change($event)" [disabled]="!isedit">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let d of div2Options" [value]="d">{{ d }}</option>
+                </select>
+              </ng-container>
+              <ng-template #readonlyDiv2>
+                <input type="text" class="form-control" [value]="company.id_t2_1_div2 || 'N/A'" disabled />
+              </ng-template>
+            </div>
+
+            <!-- City -->
+            <div class="col-md-4">
+              <label class="form-label">{{ div3Label }}<span class="text-danger" *ngIf="isedit">*</span></label>
+              <ng-container *ngIf="isedit; else readonlyDiv3">
+                <select class="form-control" formControlName="id_t2_1_div3" [disabled]="!isedit">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let d of div3Options" [value]="d">{{ d }}</option>
+                </select>
+              </ng-container>
+              <ng-template #readonlyDiv3>
+                <input type="text" class="form-control" [value]="company.id_t2_1_div3 || 'N/A'" disabled />
+              </ng-template>
+            </div>
+
+            <!-- ZIP Code -->
+            <div class="col-md-4">
+              <label class="form-label">ZIP Code<span class="text-danger" *ngIf="isedit">*</span></label>
+              <input type="text" formControlName="zip" class="form-control" [disabled]="!isedit" placeholder="Enter ZIP code">
+            </div>
+
+            <!-- Local Area -->
+            <div class="col-md-4">
+              <label class="form-label">Local Area</label>
+              <input type="text" formControlName="t2_1_local_name" class="form-control" [disabled]="!isedit" placeholder="Enter local area">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-12 mt-2">
+              <div class="d-flex justify-content-end">
+
+                <div class="col-12 mt-1">
+                <div class="d-flex justify-content-end">
+                  <button class="btn me-2" type="submit" (click)="saveChanges()" *ngIf="isedit">
+                    <i class="pi pi-check me-2"></i>Save Changes
+                  </button>
+                  <button class="btn btn-danger" type="button" *ngIf="isedit" (click)="cancelEdit()" style="background: rgb(231, 6, 6);">
+                    <i class="pi pi-times me-2"></i>Cancel
+                  </button>
+                </div>
+              </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>
+  

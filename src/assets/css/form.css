@@ -1,0 +1,34 @@
+
+.text-danger {
+    color: #dc3545 !important;
+    margin: 0px 0px -19px 1px;
+    font-size: 0.9rem;
+}
+
+.form-label{
+    font-size: 0.75rem;
+    color: #6d6d6e;
+    font-weight: 500;
+}
+
+.form-control, .form-select{
+    border-radius: 7px;
+    outline: none;
+    border: 1px solid #bbbbbb;
+    transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
+    font-size: 0.85rem;
+}
+
+.btn{
+    background: var(--primary-color);
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.required_label{
+    color: red;
+    font-size: .7rem;
+    font-weight: 300;
+  }
+  

@@ -1,0 +1,42 @@
+
+.p-confirm-dialog .p-dialog-content {
+    font-family: 'Inter', sans-serif;
+    color: #1b1b1b;
+    text-align: center;
+}
+
+/* Icon circle */
+.p-confirm-dialog .border-circle {
+    background: var(--primary-color1); /* Yellow */
+    color: #ffffff;
+}
+
+/* Headline styling */
+.p-confirm-dialog .text-2xl {
+    font-size: var(--fs-2);
+    font-weight: var(--fw-700);
+}
+
+/* Save button */
+.p-confirm-dialog .p-button {
+    background: var(--primary-color1); 
+    color: #ffffff;
+    border-radius: 12px;
+    font-weight: var(--fw-600);
+    border: 1px var(--primary-color1) solid;
+}
+
+/* Cancel button */
+.p-confirm-dialog .p-button-outlined {
+    border-color: var(--primary-color1);
+    color: var(--primary-color1);
+    border-radius: 12px;
+    background: #fff;
+    font-weight: var(--fw-600);
+}
+.p-confirm-dialog {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background-color: rgb(255, 255, 255);
+}
+
+

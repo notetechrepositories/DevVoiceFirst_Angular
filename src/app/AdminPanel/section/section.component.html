@@ -1,0 +1,132 @@
+
+
+<div class="table-card mt-2">
+    <div class="mb-3 mt-2">
+      <h3>Manage Sections</h3>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/admin/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item"><a routerLink="/admin/branch">Branches</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Sections</li>
+        </ol>
+      </nav>
+    </div>
+  
+    <div class="mb-3">
+      <div class="row w-100">
+        <div class="col-md-4"> 
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              #globalFilter
+              (input)="onGlobalFilter(globalFilter.value)"
+              placeholder="Search keyword"
+              />
+          </p-iconField>
+        </div>
+    
+        <div class="col-md-8 d-flex justify-content-end">
+          <!-- <p-button class="me-2" icon="pi pi-bookmark" severity="secondary" /> -->
+          <p-button icon="pi pi-plus" pTooltip="Add" tooltipPosition="bottom"  (click)="showDialog()"/>
+          
+        </div>
+      </div>
+      
+  
+    </div>
+  
+    <p-table
+        #dt2
+        [value]="sections"
+        [paginator]="true"
+        [rows]="rows"
+        [first]="first"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        (onPage)="pageChange($event)"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        [globalFilterFields]="['t5_1_roles_name']"
+        [loading]="loading"
+        class="table"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%">Section</th>
+                <th style="width:25%" >Type</th>
+                <th style="width:25%" >Mobile</th>
+                <th style="width:25%"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-section>
+            <tr>
+                <td>{{ section.t3_section_name }}</td>
+                <td>{{ section.t2_section_type }}</td>
+                <td>{{ section.branch_details.t2_mobile_no }}</td>
+
+                <td class="d-flex justify-content-end">
+                  <i class="pi pi-qrcode me-3"  (click)="generateQRCode(section.t3_branch_section_id)"></i>
+                  <i class="pi pi-pen-to-square me-3"  (click)="showDialog(section)"></i>
+                  <i class="pi pi-trash text-danger"  (click)="delete($event,section)"></i>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">No data available</td>
+          </tr>
+        </ng-template>
+    </p-table>
+  </div>
+  
+  
+  <p-dialog 
+    [modal]="true" 
+    [header]="isEdit ? 'Edit Section' : 'Add Section'"
+    [(visible)]="addPopupVisible" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    >
+    <form [formGroup]="sectionForm" class="row g-3">
+      <div class="col-md-12">
+        <label for="inputEmail4" class="form-label">Section Name</label>
+        <input type="text" class="form-control" id="inputEmail4" formControlName="t3_section_name">
+      </div>
+  
+      <div class="col-md-12">
+        <label  class="form-label">Section Type</label>
+        <select class="form-control" id="branchType" formControlName="t2_section_type_id">
+            <option *ngFor="let type of sectionType" [value]="type.t2_section_type_id">
+              {{ type.t2_section_type }}
+            </option>
+          </select>
+      </div>
+  
+      <div class="col-12">
+        <button type="submit" class="btn w-100" (click)="onSubmit()">Submit</button>
+      </div>
+    </form>
+    
+  </p-dialog>
+
+  <p-dialog 
+    [modal]="true" 
+    header="QR Code"
+    [(visible)]="qrCodeVisible" 
+    [style]="{ width: '30rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    >
+    <div class="d-flex justify-content-center">
+      <img [src]="qrCodeDataUrl" alt="QR Code" *ngIf="qrCodeDataUrl" height="300" width="300">
+    </div>
+    <div class="d-flex justify-content-center w-100"> 
+      <p-button icon="pi pi-download" (click)="downloadQRCode()" *ngIf="qrCodeDataUrl" label="Download"/>
+    </div>
+</p-dialog>
+  
+  <p-toast />
+  <p-confirmPopup />
+  

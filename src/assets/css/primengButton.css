@@ -1,0 +1,26 @@
+.p-button {
+    border-radius: 9px; /* Or whatever you prefer */
+  }
+
+  .p-button.p-button-icon-only {
+    width: 2.4rem;
+    padding: 0.4rem 0;
+}
+
+.p-tooltip .p-tooltip-text {
+    font-size: 0.75rem; /* smaller text */
+    padding: 0.25rem 0.5rem; /* less padding */
+    max-width: 200px; /* optional: limit width */
+}
+
+.submit-btn{
+    padding: 7px 0px;
+}
+
+.btn{
+    background: var(--primary-color);
+}
+.btn:hover{
+    background: var(--primary-color);
+    color: #fff;
+}

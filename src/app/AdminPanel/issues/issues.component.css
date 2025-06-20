@@ -1,0 +1,21 @@
+::ng-deep .p-dialog .p-dialog-content {
+    background-color: #ffffff;
+    font-size: 0.95rem;
+  }
+  
+  ::ng-deep .custom-pimage .p-image-preview-icon {
+
+    position: absolute;
+  }
+  
+  ::ng-deep .p-image-preview-container {
+    z-index: 1050; /* Ensures it overlays modals etc */
+  }
+
+  .btn-primary{
+    width: 40px;
+    border: 1px solid;
+    text-align: center;
+    border-radius: 4px;
+  }
+  

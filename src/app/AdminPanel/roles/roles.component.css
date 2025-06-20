@@ -1,0 +1,11 @@
+.text-green {
+  color: #28a745; /* Bootstrap green or any you like */
+}
+
+.text-red {
+  color: #dc3545; /* Bootstrap red or any you like */
+}
+
+.table{
+  font-size: .8rem;
+}

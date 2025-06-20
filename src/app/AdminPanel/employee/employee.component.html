@@ -1,0 +1,269 @@
+
+
+<div class="table-card mt-2">
+    <div class="mb-4 mt-2">
+      <h3>Employee List</h3>
+    </div>
+  
+    <div class="mb-3">
+      <div class="row w-100">
+        <div class="col-md-4"> 
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              #globalFilter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+              (input)="onGlobalFilter(globalFilter.value)"
+              placeholder="Search keyword"
+              />
+          </p-iconField>
+        </div>
+    
+        <div class="col-md-8 d-flex justify-content-end">
+          <!-- <p-button class="me-2" icon="pi pi-bookmark" severity="secondary" /> -->
+          <p-button icon="pi pi-plus" pTooltip="Add" tooltipPosition="bottom"  (click)="showDialog()"/>
+          
+        </div>
+      </div>
+      
+  
+    </div>
+  
+    <p-table
+        #dt2
+        [value]="employees"
+        [paginator]="true"
+        [rows]="rows"
+        [first]="first"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        (onPage)="pageChange($event)"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        [globalFilterFields]="['firstName','lastName','branchName','sectionName','roleName']"
+        class="table"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th >Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Branch</th>
+                <th>Role</th>                
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-employee>
+            <tr>
+                <td>{{ employee.firstName }} {{employee.lastName}}</td>
+                 <td>{{ employee.email }}</td>
+                <td>{{ employee.mobile }}</td>
+                
+                <td>{{ employee.branchName }}</td>
+                <!-- <td>{{employee.sectioName}}</td> -->
+                <!-- <td>{{ employee.local }},{{employee.id_t2_1_div3}}</td> -->
+                 <td>
+                  <ng-container *ngFor="let role of employee.roleNames; let last = last">
+                    {{ role }}<span *ngIf="!last">, </span>
+                  </ng-container>
+                </td>
+
+
+
+                <td>
+                  <span (click)="toggleStatus(employee)" style="cursor: pointer;">
+                    <p-tag [severity]="employee.status === 'active' ? 'success' : 'danger'">
+                      {{ employee.status | titlecase }}
+                    </p-tag>
+                  </span>
+                </td>
+                  
+                <td class="d-flex justify-content-end">
+                  <i class="pi pi-pen-to-square me-3"  (click)="showDialog(employee)"></i>
+                  <i class="pi pi-trash text-danger"  (click)="delete($event,employee.id)"></i>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">No data available</td>
+          </tr>
+        </ng-template>
+    </p-table>
+  </div>
+  
+  
+  <p-dialog 
+    [modal]="true" 
+    [header]="isEdit ? 'Edit Employee' : 'Add Employee'"
+    [(visible)]="addPopupVisible" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    >
+    <form [formGroup]="employeeform" class="row g-3">
+        <div class="col-md-6">
+            <label for="firstName" class="form-label">First Name
+              
+            </label>
+            <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Enter First Name">
+        </div>
+        <div class="col-md-6">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastName" formControlName="lastName"  placeholder="Enter Last Name">
+          </div>
+          <div class="col-md-6">
+            <label for="birthYear" class="form-label">Year of Birth <span class="text-danger">*</span></label>
+            <select class="form-select" id="birthYear" formControlName="birthDate">
+              <option value="null" selected>Select year</option>
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="Gender" class="form-label">Gender</label>
+            <select class="form-select" id="sex" formControlName="sex">
+                <option value="null" selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email id">
+          </div>
+          <div class="col-md-6">
+            <label for="mobile" class="form-label">Mobile No<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="mobile" formControlName="mobile" placeholder="Mobile number">
+          </div>
+          <div class="col-md-12">
+            <label for="address1" class="form-label">Address1</label>
+            <input type="text" class="form-control" id="address1" formControlName="address1" placeholder="Add Address 1">
+          </div>
+          <div class="col-md-12">
+            <label for="address2" class="form-label">Address2</label>
+            <input type="text" class="form-control" id="address2" formControlName="address2" placeholder="Add Address 2">
+          </div> 
+
+
+          <!-- branch -->
+          <div class="col-md-4">
+            <label for="branch" class="form-label">Branch</label>
+              <select class="form-select" id="branch"  formControlName="branchId" (change)="onBranchChange($event)">
+            <option [value]="null" selected >-- Select Branch --</option>
+            <option *ngFor="let b of branches" [value]="b.t2_company_branch_id">
+              {{ b.t2_company_branch_name }}
+            </option>
+            
+          </select>
+          </div>
+
+          <!-- section -->
+          <div class="col-md-4">
+            <label for="section" class="form-label">Section</label>
+              <select class="form-select" id="section" formControlName="sectionId" (change)="onSectionChange($event)">
+              <option [ngValue]="null">-- Select Section --</option>
+              <option [ngValue]="0">All</option> 
+              <option *ngFor="let s of filteredSections" [ngValue]="s.t3_branch_section_id">
+                {{ s.t3_section_name }}
+              </option>
+              
+            </select>
+          </div>
+                   
+            <!-- role -->
+          <div class="col-md-4">
+
+        <label for="role" class="form-label">Roles</label>
+        <div class="dropdown">
+          <button 
+            class="form-control text-start dropdown-toggle" 
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="width: 100%;"
+          >
+            {{ getSelectedRoleNames() }}
+          </button>
+          <ul class="dropdown-menu w-100">
+            <li *ngFor="let role of roles" style="font-size: .8rem;">
+              <div class="form-check ms-2">
+                <input 
+                  class="form-check-input"
+                  type="checkbox" 
+                  [value]="role.id_t5_1_sys_roles"
+                  [checked]="employeeform.value.id_t5_1_m_user_roles?.includes(role.id_t5_1_sys_roles)"
+                  (change)="onRoleCheckboxChange($event, role)"
+                  id="role-{{ role.id_t5_1_sys_roles }}"
+                />
+                <label class="form-check-label" [for]="'role-' + role.id_t5_1_sys_roles">
+                  {{ role.t5_1_roles_name }}
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+
+
+
+         
+          
+          <div class="col-md-12">
+            <label class="form-label">{{ 'Country' }}</label>
+              <select class="form-control" formControlName="id_t2_1_country" (change)="onCountryChange($event)">
+                <option value="null" selected>--Select Country--</option>
+                <option *ngFor="let c of countries" [value]="c.id_t2_1_country">
+                  {{ c.t2_1_country_name }}
+                </option>
+              </select>
+          </div>
+          <!-- Division 1 -->
+      <div class="col-md-6" *ngIf="div1Options.length">
+        <label class="form-label">{{ div1Label }}</label>
+        <select class="form-control" formControlName="id_t2_1_div1" (change)="onDiv1Change($event)">
+          <option value="">--Select {{ div1Label }}--</option>
+          <option *ngFor="let option of div1Options" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+    
+      <!-- Division 2 -->
+      <div class="col-md-6" *ngIf="div2Options.length">
+        <label class="form-label">{{ div2Label }}</label>
+        <select class="form-control" formControlName="id_t2_1_div2" (change)="onDiv2Change($event)">
+          <option value="">--Select {{ div2Label }}--</option>
+          <option *ngFor="let option of div2Options" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+    
+      <!-- Division 3 -->
+      <div class="col-md-6" *ngIf="div3Options.length">
+        <label class="form-label">{{ div3Label }}</label>
+        <select class="form-control" formControlName="id_t2_1_div3">
+          <option value="">--Select {{ div3Label }}--</option>
+          <option *ngFor="let option of div3Options" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+          
+      
+          <div class="col-md-6">
+            <label for="local" class="form-label">Locality</label>
+            <input type="text" class="form-control" id="local" formControlName="local" placeholder="Locality"/>
+          </div>
+          <div class="col-md-6">
+            <label for="zipCode" class="form-label">Zip</label>
+            <input type="text" class="form-control" id="zipCode" formControlName="zipCode" placeholder="Zipcode" />
+          </div>
+  
+      <div class="col-12">
+        <button type="submit" class="btn w-100" (click)="onSubmit()">Submit</button>
+      </div>
+    </form>
+    
+  </p-dialog>
+  
+  <p-toast />
+  <p-confirmPopup />
+   

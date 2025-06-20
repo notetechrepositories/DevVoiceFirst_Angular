@@ -1,0 +1,58 @@
+<section class="download">
+  <div class="wrapper mt-5">
+    <div class="content">
+      <h1 class="title mb-3">Voice First <span class="yellow-text">Resources</span></h1>
+      <p class="sub-head mb-4">Download Our Latest Documentation</p>
+      <p class="description mb-3">
+        Get a comprehensive overview of Voice First's real-time issue reporting and management system.
+        Access detailed documentation to help you implement and make the most of Voice First in your organization.
+      </p>
+      <p class="description">Preview and download the resources below:</p>
+
+      <!-- <div class="button-group mt-2">
+        <button class="download-btn" (click)="previewDoc('https://docs.google.com/document/d/1fQgjOlRmpl_8eK9ug41sqC1eRGWg7RdNcr64qc-bF8A/preview')">
+          <i class="fa-solid fa-eye"></i> Whitepaper
+        </button>
+        <button class="download-btn" (click)="previewDoc('https://docs.google.com/document/d/15hjpErT2QYbeFG6GJ_Y9ZZhCGmDGwhmIZvOw4geh7YQ/preview')">
+          <i class="fa-solid fa-eye"></i> Whitepaper Summary
+        </button>
+        <button class="download-btn" (click)="previewDoc('https://docs.google.com/presentation/d/1o5OEMOEdpzS7iZBTkLzYTItKF7Tkx2lyQtRg-QPQWY8/preview')">
+          <i class="fa-solid fa-eye"></i> Product Presentation
+        </button>
+        <button class="download-btn" (click)="previewDoc('https://docs.google.com/presentation/d/1GhsnkFDCSDpLvkV32VuluLd6B5zu2eeqYS-rCwfqp9E/preview')">
+          <i class="fa-solid fa-eye"></i> Product Presentation Summary
+        </button>
+      </div>
+
+      <div *ngIf="previewUrl" class="preview-container mt-4">
+        <iframe [src]="previewUrl | safe" width="100%" height="600px"></iframe>
+        <div class="d-flex justify-content-center mt-5">
+            <button class="download-btn mt-2" (click)="download(currentDownloadUrl)">
+                <i class="fa-solid fa-download"></i> Download
+            </button>
+        </div>
+      </div> -->
+
+    <div class="document-container mt-5" *ngIf="safeDocUrl">
+      <!-- Loading Spinner -->
+      <div *ngIf="isLoading" class="spinner-overlay">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Iframe -->
+      <iframe
+        [src]="safeDocUrl"
+        width="100%"
+        height="1150px"
+        frameborder="0"
+        (load)="onIframeLoad()"
+        style="background: white;">
+      </iframe>
+    </div>
+
+    </div>
+  </div>
+</section>
+
+
+
