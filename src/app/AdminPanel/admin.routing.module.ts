@@ -13,8 +13,7 @@ import { ProfileComponent } from './profile/profile.component';
 
 export const AdminRoutes: Routes = [
   {
-    path: '',
-    component: AdminDashboardComponent
+    path: '', redirectTo: 'admin-dash', pathMatch: 'full' 
   },
   {
     path: 'admin-dash',

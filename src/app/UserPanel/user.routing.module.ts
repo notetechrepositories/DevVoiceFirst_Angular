@@ -10,8 +10,7 @@ import { AboutUsComponent } from './about-us/about-us.component';
 
 export const UsersRoutes: Routes = [
   {
-    path: '',
-    component: HomeComponent,
+    path: '', redirectTo: 'home', pathMatch: 'full'
   },
   {
     path: 'home',

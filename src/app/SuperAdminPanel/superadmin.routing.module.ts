@@ -6,10 +6,9 @@ import { SuperadminDashboardComponent } from './superadmin-dashboard/superadmin-
 
 export const SuperAdminRoutes: Routes = [
   {
-    path: '',
-    component: SuperadminDashboardComponent
+    path: '', redirectTo: 'superadmin-dashboard', pathMatch: 'full' 
   },
-   {
+  {
     path: 'superadmin-dashboard',
     component: SuperadminDashboardComponent
   },
