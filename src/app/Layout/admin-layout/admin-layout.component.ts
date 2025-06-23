@@ -22,7 +22,7 @@ export class AdminLayoutComponent {
   ) { }
   async ngOnInit(): Promise<void> {
     this.checkScreenSize();
-    this.userRole = localStorage.getItem('role');
+    this.userRole = localStorage.getItem('company');
     
   }
 
