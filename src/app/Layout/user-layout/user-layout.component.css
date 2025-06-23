@@ -716,6 +716,13 @@ main{
   top: auto !important;
 }
 
+.forgot_password {
+
+  display: flex;
+  justify-content: end;
+
+}
+
 .forgot_password p{
   font-size: .8rem;
   color: #8B8E98;
@@ -747,3 +754,7 @@ main{
   font-size: .9rem;
   font-weight: 600;
 }
+
+/* loaders */
+
+

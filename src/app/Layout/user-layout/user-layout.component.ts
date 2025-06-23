@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/auth.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LocationService } from '../../Services/LocationService/location.service';
+import { LogarithmicScale } from 'chart.js';
 
 @Component({
   selector: 'app-user-layout',
@@ -23,18 +24,21 @@ export class UserLayoutComponent {
   usernameFormVisible:boolean=true;
   isOtpFormVisible:boolean=false;
   forgotOtpValue:any;
+  encryptedOtp:string='';
   newPassword:any;
   confirmPassword:any;
+  userData:string='';
 
   isSuggestionVisible:boolean=false;
-
-
+  timeLeft: number = 60; 
+  timerInterval: any;
+  isOtpDisabled: boolean = false;
   userType:any;
   otpValue : any
-
+  resendOtpClicks: number = -1; 
   username:string='';
   password:string='';
-
+ loading: boolean = false;
 
   countries: any[]=[];
 
@@ -202,7 +206,7 @@ onLogin(){
   
   this.authService.login(this.requetData).subscribe({
     next: (res:any) => {
-      if (res) {
+      if (res.status === 200) {
 
         localStorage.setItem('token', res.data.token ?? '');
         localStorage.setItem('usertype', res.data.user_type?? '');
@@ -220,7 +224,8 @@ onLogin(){
         }
         console.log('Login Success:', res.status);
         
-      } else {
+      } 
+      else {
         console.warn('Login Failed:', res.message);
         this.messageService.add({
           key: 'bottomCenterToast', 
@@ -243,20 +248,25 @@ toggleLoginForm(){
   this.username='';
 }
 
-// --------------------------------------------------------------
-
 onSendOtp(){
   if(this.username){
     this.isEmailFormVisible=false;
   }
 }
-
-// ---------------------------------------------------------------
-
+startTimer(): void {
+    this.timerInterval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+        if (this.resendOtpClicks === 3 && this.timeLeft === 0) {
+      this.isForgotVisible = false;  
+    }
+      } else {
+        this.isOtpDisabled = true;  // Disable OTP input and button when the timer is up
+        clearInterval(this.timerInterval);  // Stop the timer
+      }
+    }, 1000);  // Update every second
+  }
 onCreateAccount(){
-  // this.isloginVisible=false;
-  // this.isRegisterVisible=true;
-  // this.userForm.reset();
   this.isSuggestionVisible=true;
   this.isloginVisible=false;
 }
@@ -355,7 +365,10 @@ onRegister(){
 }
 
 
-// Forgor Password
+//---------------------------------------- Forgot Password-----------------------------------
+
+
+
 onForgotPassword() {
   this.isForgotVisible = true;
   this.usernameFormVisible = true;
@@ -363,46 +376,94 @@ onForgotPassword() {
 }
 
 onSendForgotOtp() {
-  if (this.username) {
-    this.isOtpFormVisible = true;
-    this.usernameFormVisible = false;
-    this.forgotOtpValue = '';
+    this.loading = true;  
+    this.timeLeft = 60; // Reset timer
+    this.resendOtpClicks++;
+
+    if (this.username) {
+      this.authService.forgortPassword(this.username).subscribe({
+        next: (res: any) => { 
+          console.log(res);
+          
+          if (res.status == 200) {
+              this.loading = false;
+            this.startTimer();
+            this.isOtpFormVisible = true;
+            this.usernameFormVisible = false;
+            this.forgotOtpValue = '';
+            this.encryptedOtp = res.data.encryptedOtp;
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.message,
+              life: 2000,
+            });
+          }
+        }
+    });
   }
 }
 
-onForgotOtpSubmit() {
-  if (this.forgotOtpValue) {
-    this.usernameFormVisible = false;
-    this.isOtpFormVisible = false;;
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'OTP Verified Successfully',
-      life: 3000,
-    });
-  } else {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Please enter OTP',
-      life: 3000,
+
+
+onVerifyOtp() {
+  if (this.encryptedOtp) {
+    const data = {
+      otp: this.forgotOtpValue,
+      encrypted_data: this.encryptedOtp
+    };
+
+    this.authService.verifyOtp(data).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        
+        if (res.status == 200) {
+          this.usernameFormVisible = false;
+          this.isOtpFormVisible = false;
+          this.userData = res.data.userData;
+
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: res.message,
+            life: 2000,
+          });
+        }
+      }
     });
   }
 }
 
-onForgotPasswordSubmit() {
+
+onResetPassword() {
   if (this.newPassword && this.confirmPassword) {
     if (this.newPassword === this.confirmPassword) {
       this.isForgotVisible = false;
       this.isOtpFormVisible = false;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Password Changed Successfully',
-        life: 3000,
+      console.log(this.userData);
+      
+      const data = {
+     
+        user_deatils: this.userData,
+        password: this.confirmPassword,
+      }
+      this.authService.resetPassword(data).subscribe({
+        next: (res: any) => {
+          if (res.status === 200) {
+            this.isloginVisible = true;
+            this.username = '';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.message,
+              life: 3000,
+            });
+          }
+        }
       });
-      this.isloginVisible = true;
-      this.username = '';
     } else {
       this.messageService.add({
         severity: 'error',

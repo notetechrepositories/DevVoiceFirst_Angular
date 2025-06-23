@@ -43,4 +43,18 @@ export class AuthService {
       }
     });
   }
+
+forgortPassword(username: string): Observable<any> {
+  const formData = new FormData();
+  formData.append('username', username);
+  return this.http.post(`${this.apiUrl}/auth/forgot-password`, formData);
+}
+
+  verifyOtp(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/varification-otp`, data);
+  }
+
+  resetPassword(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/reset-password`, data);
+  }
 }

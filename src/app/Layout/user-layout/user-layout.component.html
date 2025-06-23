@@ -180,8 +180,8 @@
       <input placeholder="Password" name="password" [(ngModel)]="password" type="password" class="input_field"
         id="password_field">
     </div>
-    <div class="forgot_password text-end">
-      <p (click)="onForgotPassword()">Forgot password ?</p>
+    <div class="forgot_password">
+      <p (click)="onForgotPassword()">Forgot password?</p>
     </div>
     <button type="submit" class="sign-in_btn" (click)="onLogin()">
       <span>Sign In</span>
@@ -489,8 +489,9 @@
       <input placeholder="name@mail.com" name="username" [(ngModel)]="username" type="text" class="input_field"
         id="email_field">
     </div>
-    <button type="submit" class="sign-in_btn" (click)="onSendForgotOtp()">
-      <span>Send OTP</span>
+    <button type="submit" class="sign-in_btn" (click)="onSendForgotOtp()" [disabled]="loading">
+       <span *ngIf="!loading">Send OTP</span>
+    <span *ngIf="loading">Loading...</span>
     </button>
   </form>
   }
@@ -498,13 +499,20 @@
   @else if(isOtpFormVisible){
   <form class="form_container w-100" style="padding: 23px 40px 20px 40px;">
 
-    <span class="subtitle">4 - Digit OTP is send to the registered email address</span>
+    <span class="subtitle">6 - Digit OTP is send to the registered email address</span>
     <div class="flex justify-content-center">
-      <p-inputOtp [(ngModel)]="forgotOtpValue" name="forgotOtpValue" [integerOnly]="true" />
+      <p-inputOtp [(ngModel)]="forgotOtpValue" name="forgotOtpValue" [length]="6" [integerOnly]="true" />
     </div>
-    <button type="submit" class="sign-in_btn" (click)="onForgotOtpSubmit()">
-      <span>Verify OTP</span>
+    <button type="submit" class="sign-in_btn" (click)="timeLeft === 0 ? onSendForgotOtp() : onVerifyOtp()">
+       <span *ngIf="!loading">{{ timeLeft === 0 ? 'Resend OTP' : 'Verify OTP' }}</span>
+        <span *ngIf="loading">Loading...</span>
     </button>
+      <div *ngIf="timeLeft > 0" class="timer">
+    <span>{{ timeLeft }} seconds remaining</span>
+  </div>
+  <div *ngIf="timeLeft === 0" class="timer">
+    <span>OTP Expired</span>
+  </div>
   </form>
   }
   @else {
@@ -540,7 +548,7 @@
       <input placeholder="Password" name="confirmPassword" [(ngModel)]="confirmPassword" type="password"
         class="input_field" id="password_field">
     </div>
-    <button type="submit" class="sign-in_btn" (click)="onForgotPasswordSubmit()">
+    <button type="submit" class="sign-in_btn" (click)="onResetPassword()">
       <span>Submit</span>
     </button>
   </form>

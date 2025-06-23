@@ -10,7 +10,7 @@
         </div>
   
         <div class="nav-list">
-          @if(userRole === 'admin') {
+          @if(userRole === 'company') {
             <a class="nav-link" routerLink="/admin/admin-dash" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <i class='bx bxs-dashboard'></i>
             <span *ngIf="isSidebarExpanded" class="nav-name">Dashboard</span>
