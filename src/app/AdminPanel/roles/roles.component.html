@@ -95,67 +95,64 @@
   [style]="{ width: '70rem' }" 
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
   >
-  <form [formGroup]="roleForm" class="row g-3">
-    <div class="col-md-12">
-      <label for="inputEmail4" class="form-label">Role</label>
-      <input type="text" class="form-control" id="inputEmail4" formControlName="t8_1_roles_name">
-    </div>
+<form [formGroup]="roleForm" class="row g-3">
+  <div class="col-md-12">
+    <label class="form-label">Role</label>
+    <input type="text" class="form-control" formControlName="t8_1_roles_name">
+  </div>
 
-    <div class="col-md-12 mt-5">
-        <div class="row d-flex justify-content-center">
-            <div class="col-md-6 d-flex justify-content-center">
-                <label for="inputEmail4" class="form-label text-dark">
-                    <input type="checkbox" id="inputEmail4" formControlName="t8_1_all_location_access" style="transform: scale(1.5); margin-right: 8px;"> All Location Access
-                </label>
-            </div>
-            <div class="col-md-6 d-flex justify-content-center">
-                <label for="inputEmail4" class="form-label text-dark">
-                    <input type="checkbox" id="inputEmail4" formControlName="t8_1_all_issues" style="transform: scale(1.5); margin-right: 8px;"> All Issue Access
-                </label>
-            </div>
-        </div>
+  <div class="col-md-12 mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 d-flex justify-content-center">
+        <label class="form-label text-dark">
+          <input type="checkbox" formControlName="t8_1_all_location_access" style="transform: scale(1.5); margin-right: 8px;"> All Location Access
+        </label>
       </div>
-
-      <div class="col-md-12 mt-4">
-      <h6 class="fw-bold">Permissions</h6>
-      <div formGroupName="permissions">
-        <table class="table table-bordered text-start">
-          <thead>
-            <tr>
-              <th>Module</th>
-              <th class="text-center">Create</th>
-              <th class="text-center">Read</th>
-              <th class="text-center">Update</th>
-              <th class="text-center">Delete</th>
-              <th class="text-center">Update From Excel</th>
-              <th class="text-center">Download-Excel</th>
-              <th class="text-center">Download-Pdf</th>
-              
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let mod of modules" [formGroupName]="mod">
-              <td class="text-capitalize">{{ mod.t7_program_name }}</td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_add" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_view" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_edit" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_delete" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_update_from_excel" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_download_excel" /></td>
-              <td class="text-center"><input type="checkbox" formControlName="t8_download_pdf" /></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="col-md-6 d-flex justify-content-center">
+        <label class="form-label text-dark">
+          <input type="checkbox" formControlName="t8_1_all_issues" style="transform: scale(1.5); margin-right: 8px;"> All Issue Access
+        </label>
       </div>
     </div>
+  </div>
 
-  
-      
-
-    <div class="col-12">
-      <button type="submit" class="btn w-100" (click)="onSubmit()">Submit</button>
+  <div class="col-md-12 mt-4">
+    <h6 class="fw-bold">Permissions</h6>
+    <div formGroupName="permissions">
+      <table class="table table-bordered text-start">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th class="text-center">Create</th>
+            <th class="text-center">Read</th>
+            <th class="text-center">Update</th>
+            <th class="text-center">Delete</th>
+            <th class="text-center">Update From Excel</th>
+            <th class="text-center">Download-Excel</th>
+            <th class="text-center">Download-Pdf</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mod of modules" [formGroupName]="mod.t7_program_id">
+            <td class="text-capitalize">{{ mod.t7_program_name }}</td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_add"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_view"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_edit"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_delete"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_update_from_excel"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_download_excel"></td>
+            <td class="text-center"><input type="checkbox" formControlName="t8_download_pdf"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </form>
+  </div>
+
+  <div class="col-12">
+    <button type="submit" class="btn w-100" (click)="onSubmit()">Submit</button>
+  </div>
+</form>
+
   
 </p-dialog>
 

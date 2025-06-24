@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environment/environment';
@@ -14,8 +14,13 @@ export class RoleService {
 
   constructor(private router: Router, private http: HttpClient) {}
 
+  accessToken = localStorage.getItem('token');
+  headers = new HttpHeaders({
+    'Authorization': `Bearer ${this.accessToken}`
+  });
+
   insertRole(data: any){
-    return this.http.post(`${this.apiUrl}/role/add-role`, data);
+    return this.http.post(`${this.apiUrl}/role/add-role`, data, { headers:this.headers });
   }
 
   // roles = [
