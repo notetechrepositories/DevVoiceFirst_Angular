@@ -11,13 +11,13 @@ export interface Role {
   t8_1_all_issues: string;
   role_programs?: {
     t7_program_id: string;
-    t8_add: string;
-    t8_view: string;
-    t8_edit: string;
-    t8_delete: string;
-    t8_update_from_excel: string;
-    t8_download_excel: string;
-    t8_download_pdf: string;
+    t8_2_add: string;
+    t8_2_view: string;
+    t8_2_edit: string;
+    t8_2_delete: string;
+    t8_2_update_from_excel: string;
+    t8_2_download_excel: string;
+    t8_2_download_pdf: string;
   }[];
 }
 @Component({
@@ -83,8 +83,6 @@ export class RolesComponent {
     this.rows = event.rows;
   }
   initPermissions(role: any = null) {
-
-    
     const filterRole = { filters: {} };
 
     this.roleService.getprograms(filterRole).subscribe((res: any) => {
@@ -96,17 +94,17 @@ export class RolesComponent {
         const key = mod.t7_program_id;
 
         permissionsGroup[key] = this.fb.group({
-          t8_add: [role?.role_programs?.[key]?.t8_add === 'y'],
-          t8_view: [role?.role_programs?.[key]?.t8_view === 'y'],
-          t8_edit: [role?.role_programs?.[key]?.t8_edit === 'y'],
-          t8_delete: [role?.role_programs?.[key]?.t8_delete === 'y'],
-          t8_update_from_excel: [
-            role?.role_programs?.[key]?.t8_update_from_excel === 'y',
+          t8_2_add: [role?.role_programs?.[key]?.t8_2_add === 'y'],
+          t8_2_view: [role?.role_programs?.[key]?.t8_2_view === 'y'],
+          t8_2_edit: [role?.role_programs?.[key]?.t8_2_edit === 'y'],
+          t8_2_delete: [role?.role_programs?.[key]?.t8_2_delete === 'y'],
+          t8_2_update_from_excel: [
+            role?.role_programs?.[key]?.t8_2_update_from_excel === 'y',
           ],
-          t8_download_excel: [
-            role?.role_programs?.[key]?.t8_download_excel === 'y',
+          t8_2_download_excel: [
+            role?.role_programs?.[key]?.t8_2_download_excel === 'y',
           ],
-          t8_download_pdf: [role?.role_programs?.[key]?.t8_download_pdf === 'y'],
+          t8_2_download_pdf: [role?.role_programs?.[key]?.t8_2_download_pdf === 'y'],
         });
       });
 
@@ -138,9 +136,28 @@ export class RolesComponent {
       this.editingIndex = this.roles.findIndex(
         (r) => r.t8_1_role_id === role.t8_1_role_id
       );
-      console.log(role);
-      
-      this.initPermissions(role);
+      console.log(role.role_programs);
+      if (role && Array.isArray(role.role_programs)) {
+        const permissionsFormGroup: { [key: string]: FormGroup } = {};
+        console.log(role.role_programs);
+        
+        for (const program of role.role_programs) {
+          permissionsFormGroup[program.t7_program_id] = this.fb.group({
+            t8_2_add: [program.t8_2_add === 'y'],
+            t8_2_view: [program.t8_2_view === 'y'],
+            t8_2_edit: [program.t8_2_edit === 'y'],
+            t8_2_delete: [program.t8_2_delete === 'y'],
+            t8_2_update_from_excel: [program.t8_2_update_from_excel === 'y'],
+            t8_2_download_excel: [program.t8_2_download_excel === 'y'],
+            t8_2_download_pdf: [program.t8_2_download_pdf === 'y'],
+          });
+        }
+
+        console.log(permissionsFormGroup);
+        
+
+        this.roleForm.setControl('permissions', this.fb.group(permissionsFormGroup));
+      }
 
       const data = {
         t8_1_roles_name: role.t8_1_roles_name,
@@ -173,13 +190,13 @@ export class RolesComponent {
 
       return {
         t7_program_id: key,
-        t8_add: permGroup.t8_add ? 'y' : 'n',
-        t8_view: permGroup.t8_view ? 'y' : 'n',
-        t8_edit: permGroup.t8_edit ? 'y' : 'n',
-        t8_delete: permGroup.t8_delete ? 'y' : 'n',
-        t8_update_from_excel: permGroup.t8_update_from_excel ? 'y' : 'n',
-        t8_download_excel: permGroup.t8_download_excel ? 'y' : 'n',
-        t8_download_pdf: permGroup.t8_download_pdf ? 'y' : 'n',
+        t8_2_add: permGroup.t8_2_add ? 'y' : 'n',
+        t8_2_view: permGroup.t8_2_view ? 'y' : 'n',
+        t8_2_edit: permGroup.t8_2_edit ? 'y' : 'n',
+        t8_2_delete: permGroup.t8_2_delete ? 'y' : 'n',
+        t8_2_update_from_excel: permGroup.t8_2_update_from_excel ? 'y' : 'n',
+        t8_2_download_excel: permGroup.t8_2_download_excel ? 'y' : 'n',
+        t8_2_download_pdf: permGroup.t8_2_download_pdf ? 'y' : 'n',
       };
     });
 
