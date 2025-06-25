@@ -274,7 +274,12 @@ export class EmployeeComponent {
 
 
   getRoles(){
-    this.roles=this.roleService.getAllroles();
+      const filterRole = {
+      filters: {},
+    };
+      this.roleService.getAllroles(filterRole).subscribe((data:any) => {
+    this.roles = data;
+  });
   }
 
   loadEmployees() {

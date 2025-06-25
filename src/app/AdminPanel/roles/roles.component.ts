@@ -5,83 +5,57 @@ import { Table } from 'primeng/table';
 import { RoleService } from '../../Services/RoleService/role.service';
 
 export interface Role {
-  id_t5_1_sys_roles: string;
-  t5_1_roles_name: string;
-  t5_1_all_location_access: string;
-  t5_1_all_issues: string;
-  permissions?: {
-    [module: string]: {
-      create: boolean;
-      read: boolean;
-      update: boolean;
-      delete: boolean;
-    };
-  };
+  t8_1_role_id: string;
+  t8_1_roles_name: string;
+  t8_1_all_location_access: string;
+  t8_1_all_issues: string;
+  role_programs?: {
+    t7_program_id: string;
+    t8_add: string;
+    t8_view: string;
+    t8_edit: string;
+    t8_delete: string;
+    t8_update_from_excel: string;
+    t8_download_excel: string;
+    t8_download_pdf: string;
+  }[];
 }
-
 @Component({
   selector: 'app-roles',
   templateUrl: './roles.component.html',
-  styleUrl: './roles.component.css'
+  styleUrl: './roles.component.css',
 })
 export class RolesComponent {
-
   first: number = 0;
   rows: number = 10;
   loading: boolean = true;
 
   roles: Role[] = [];
-  addPopupVisible:boolean=false;
+  addPopupVisible: boolean = false;
   roleForm!: FormGroup;
   isEdit: boolean = false;
   editingIndex: number | null = null;
   searchKeyword: string = '';
-
-  modules = ['employee', 'issue-type', 'branch', 'reported issue'];
-
+  modules: any;
+  payload:any;
   @ViewChild('dt2') dt2!: Table;
-
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private roleService:RoleService
+    private roleService: RoleService
   ) {}
 
   ngOnInit() {
-    this.loadRoles();
+    this.getRoles();
     this.roleForm = this.fb.group({
-      id_t5_1_company_roles: [''],
-      id_t5_1_sys_roles: [''],
-      t5_1_roles_name: ['', [Validators.required]],
-      t5_1_all_location_access: [false],
-      t5_1_all_issues: [false],
-      permissions: this.fb.group({})
+      t8_1_roles_name: ['', Validators.required],
+      t8_1_all_location_access: [false],
+      t8_1_all_issues: [false],
+      permissions: this.fb.group({}),
     });
-  
-    this.initPermissions();  // <-- Ensure it's initialized
-  }
 
-  initPermissions(role: any = null) {
-    const permissionsGroup: any = {};
-    this.modules.forEach(mod => {
-      permissionsGroup[mod] = this.fb.group({
-        create: [role?.permissions?.[mod]?.create || false],
-        read: [role?.permissions?.[mod]?.read || false],
-        update: [role?.permissions?.[mod]?.update || false],
-        delete: [role?.permissions?.[mod]?.delete || false],
-      });
-    });
-    this.roleForm.setControl('permissions', this.fb.group(permissionsGroup));
-  }
-
-  onGlobalFilter(value: string) {
-    this.dt2.filterGlobal(value, 'contains');
-  }
-
-  loadRoles() {
-    this.roles = this.roleService.getAllroles();
-    this.loading = false;
+    this.initPermissions(); // load modules initially
   }
 
   next() {
@@ -108,27 +82,75 @@ export class RolesComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
+  initPermissions(role: any = null) {
 
+    
+    const filterRole = { filters: {} };
+
+    this.roleService.getprograms(filterRole).subscribe((res: any) => {
+      const permissionsGroup: { [key: string]: FormGroup } = {};
+
+      this.modules = res.data?.Items || [];
+
+      this.modules.forEach((mod: any) => {
+        const key = mod.t7_program_id;
+
+        permissionsGroup[key] = this.fb.group({
+          t8_add: [role?.role_programs?.[key]?.t8_add === 'y'],
+          t8_view: [role?.role_programs?.[key]?.t8_view === 'y'],
+          t8_edit: [role?.role_programs?.[key]?.t8_edit === 'y'],
+          t8_delete: [role?.role_programs?.[key]?.t8_delete === 'y'],
+          t8_update_from_excel: [
+            role?.role_programs?.[key]?.t8_update_from_excel === 'y',
+          ],
+          t8_download_excel: [
+            role?.role_programs?.[key]?.t8_download_excel === 'y',
+          ],
+          t8_download_pdf: [role?.role_programs?.[key]?.t8_download_pdf === 'y'],
+        });
+      });
+
+      this.roleForm.setControl('permissions', this.fb.group(permissionsGroup));
+    });
+  }
+
+  onGlobalFilter(value: string) {
+    this.dt2.filterGlobal(value, 'contains');
+  }
+
+  getRoles() {
+    const filterRole = {
+      filters: {},
+    };
+    this.roleService.getAllroles(filterRole).subscribe((res: any) => {
+      this.roles = res.data?.Items || [];
+    });
+    console.log(this.roles);
+    
+  }
 
   showDialog(role?: Role) {
     this.addPopupVisible = true;
-  
+    console.log(this.roles);
+    
     if (role) {
       this.isEdit = true;
-      this.editingIndex = this.roles.findIndex(r => r.id_t5_1_sys_roles === role.id_t5_1_sys_roles);
-  
-      // Only call once, before patchValue
+      this.editingIndex = this.roles.findIndex(
+        (r) => r.t8_1_role_id === role.t8_1_role_id
+      );
+      console.log(role);
+      
       this.initPermissions(role);
-  
+
       const data = {
-        id_t5_1_company_roles: role.id_t5_1_sys_roles,
-        id_t5_1_sys_roles: role.id_t5_1_sys_roles,
-        t5_1_roles_name: role.t5_1_roles_name,
-        t5_1_all_location_access: role.t5_1_all_location_access === 'y',
-        t5_1_all_issues: role.t5_1_all_issues === 'y'
+        t8_1_roles_name: role.t8_1_roles_name,
+        t8_1_all_location_access: role.t8_1_all_location_access === 'y',
+        t8_1_all_issues: role.t8_1_all_issues === 'y',
       };
-  
+
       this.roleForm.patchValue(data);
+      console.log(this.roleForm.value);
+      
     } else {
       this.isEdit = false;
       this.editingIndex = null;
@@ -136,32 +158,69 @@ export class RolesComponent {
       this.initPermissions();
     }
   }
-  
-
 
   onSubmit() {
-    const data = this.roleForm.value;
-    data.t5_1_all_location_access = data.t5_1_all_location_access ? 'y' : 'n';
-    data.t5_1_all_issues = data.t5_1_all_issues ? 'y' : 'n';
+    const formValue = this.roleForm.value;
 
-    const formattedPermissions: any = {};
-    this.modules.forEach(mod => {
-      formattedPermissions[mod] = data.permissions[mod];
+    const t8_1_all_location_access = formValue.t8_1_all_location_access
+      ? 'y'
+      : 'n';
+    const t8_1_all_issues = formValue.t8_1_all_issues ? 'y' : 'n';
+
+    const role_programs = this.modules.map((mod: any) => {
+      const key = mod.t7_program_id;
+      const permGroup = formValue.permissions[key];
+
+      return {
+        t7_program_id: key,
+        t8_add: permGroup.t8_add ? 'y' : 'n',
+        t8_view: permGroup.t8_view ? 'y' : 'n',
+        t8_edit: permGroup.t8_edit ? 'y' : 'n',
+        t8_delete: permGroup.t8_delete ? 'y' : 'n',
+        t8_update_from_excel: permGroup.t8_update_from_excel ? 'y' : 'n',
+        t8_download_excel: permGroup.t8_download_excel ? 'y' : 'n',
+        t8_download_pdf: permGroup.t8_download_pdf ? 'y' : 'n',
+      };
     });
-    data.permissions = formattedPermissions;
+
+    this.payload = {
+      t8_1_roles_name: formValue.t8_1_roles_name,
+      t8_1_all_location_access,
+      t8_1_all_issues,
+      role_programs,
+    };
 
     if (this.isEdit && this.editingIndex !== null) {
-      this.roles[this.editingIndex] = {
-        ...this.roles[this.editingIndex],
-        ...data
-      };
-      this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Role updated successfully' });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: 'Role updated successfully',
+      });
     } else {
-      this.roles.push(data);
-      this.messageService.add({ severity: 'success', summary: 'Added', detail: 'Role added successfully' });
+      this.roleService.insertRole(this.payload).subscribe({
+        next: (res: any) => {
+           console.log(res);
+          if (res.status == 200) {
+           this.roles.push(this.payload);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Updated',
+              detail: 'Role updated successfully',
+            });
+            this.addPopupVisible = false;
+          }
+         
+          
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to save role',
+          });
+        },
+      });
     }
-
-    this.addPopupVisible = false;
   }
 
   delete(event: Event, roleToDelete: Role) {
@@ -171,10 +230,14 @@ export class RolesComponent {
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-sm',
       accept: () => {
-        this.roles = this.roles.filter(role => role !== roleToDelete);
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Role deleted' });
+        this.roles = this.roles.filter((role) => role !== roleToDelete);
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Deleted',
+          detail: 'Role deleted',
+        });
       },
-      reject: () => {}
+      reject: () => {},
     });
   }
 }
