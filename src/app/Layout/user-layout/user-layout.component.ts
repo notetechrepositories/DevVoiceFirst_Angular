@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/auth.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LocationService } from '../../Services/LocationService/location.service';
-import { LogarithmicScale } from 'chart.js';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-user-layout',
@@ -38,7 +38,7 @@ export class UserLayoutComponent {
   resendOtpClicks: number = -1; 
   username:string='';
   password:string='';
- loading: boolean = false;
+  loading: boolean = false;
 
   countries: any[]=[];
 
@@ -59,6 +59,8 @@ export class UserLayoutComponent {
   div3Label = 'Division 3';
 
   userForm!: FormGroup;
+
+  private jwtHelper = new JwtHelperService();
   
     constructor(
       private router:Router,
@@ -74,6 +76,7 @@ export class UserLayoutComponent {
   async ngOnInit(): Promise<void> {
     this.loadLocations();
     this.checkScreenSize();
+    this.googleInit();
     console.log(this.authService.isLoggedIn());
     if(this.authService.isLoggedIn()){
       this.isloggedin=true;
@@ -133,10 +136,8 @@ export class UserLayoutComponent {
 
   //================ Scrolling=================
 
-  showScroll: boolean = false; // Controls visibility of the button
-  scrollThreshold: number = 200; // Show button after scrolling down 200px
-
-  // Scroll to Top
+  showScroll: boolean = false; 
+  scrollThreshold: number = 200; 
   scrollToTop(): void {
     window.scrollTo({
       top: 0,
@@ -482,4 +483,60 @@ onResetPassword() {
   }
 }
 
+// --------------------------- Google SignIn ---------------------------
+
+user = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    photoUrl: ''
+  };
+
+ googleInit(): void {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      // Once the script is loaded, initialize Google Sign-In
+      window.google.accounts.id.initialize({
+        client_id: '1058839439916-ish868v28g5j4fa0jilg5qf4hdbqm7v2.apps.googleusercontent.com', // Replace with your Google Client ID
+        callback: this.handleCredentialResponse.bind(this), // Use bind to maintain context
+      });
+      window.google.accounts.id.renderButton(
+        document.getElementById('googleSignInBtn'), 
+        {
+          class: 'g_id_signin',
+          theme: 'outline',
+          size: 'large',
+          shape: 'rectangular',
+          text: 'sign_in_with',
+          logo_alignment: 'left'
+        }
+      );
+    };
+    document.head.appendChild(script);
+  }
+
+  // Handle response from Google after sign-in
+  handleCredentialResponse(response: any): void {
+    const credential = response.credential;
+
+    try {
+      const user = this.jwtHelper.decodeToken(credential);  // Decode JWT token
+      this.user.firstName = user.given_name;
+      this.user.lastName = user.family_name;
+      this.user.email = user.email;
+      this.user.photoUrl = user.picture;
+
+      console.log('User Info:', this.user);
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+    }
+  }
+
+  signInWithGoogle(): void {
+    window.google.accounts.id.prompt();  // Trigger Google sign-in prompt
+  }
+  
 }

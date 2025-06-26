@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { RoleService } from '../../Services/RoleService/role.service';
+import { IssueService } from '../../Services/IssueSevice/issue.service';
 
 export interface Role {
   t8_1_role_id: string;
@@ -82,16 +83,14 @@ export class RolesComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
+
   initPermissions(role: any = null) {
     const filterRole = { filters: {} };
-
     this.roleService.getprograms(filterRole).subscribe((res: any) => {
       const permissionsGroup: { [key: string]: FormGroup } = {};
-
       this.modules = res.data?.Items || [];
-
       this.modules.forEach((mod: any) => {
-        const key = mod.t7_program_id;
+      const key = mod.t7_program_id;
 
         permissionsGroup[key] = this.fb.group({
           t8_2_add: [role?.role_programs?.[key]?.t8_2_add === 'y'],
@@ -140,7 +139,6 @@ export class RolesComponent {
       if (role && Array.isArray(role.role_programs)) {
         const permissionsFormGroup: { [key: string]: FormGroup } = {};
         console.log(role.role_programs);
-        
         for (const program of role.role_programs) {
           permissionsFormGroup[program.t7_program_id] = this.fb.group({
             t8_2_add: [program.t8_2_add === 'y'],
@@ -218,7 +216,7 @@ export class RolesComponent {
         next: (res: any) => {
            console.log(res);
           if (res.status == 200) {
-           this.roles.push(this.payload);
+           this.getRoles();
             this.messageService.add({
               severity: 'success',
               summary: 'Updated',
@@ -240,21 +238,36 @@ export class RolesComponent {
     }
   }
 
-  delete(event: Event, roleToDelete: Role) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Do you want to delete this role?',
-      icon: 'pi pi-info-circle',
-      acceptButtonStyleClass: 'p-button-danger p-button-sm',
-      accept: () => {
-        this.roles = this.roles.filter((role) => role !== roleToDelete);
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Deleted',
-          detail: 'Role deleted',
-        });
-      },
-      reject: () => {},
-    });
-  }
+delete(event: Event, role_id: string) {
+  this.confirmationService.confirm({
+    target: event.target as EventTarget,
+    message: 'Do you want to delete this role?',
+    icon: 'pi pi-info-circle',
+    acceptButtonStyleClass: 'p-button-danger p-button-sm',
+    accept: () => {
+      this.roleService.deleteRole(role_id).subscribe({
+        next: (res: any) => {
+          console.log(res);
+          if (res.status === 200) {
+            this.roles = this.roles.filter(role => role.t8_1_role_id !== role_id);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Deleted',
+              detail: 'Role deleted',
+            });
+          }
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to delete role',
+          });
+        }
+      });
+    },
+    reject: () => {}
+  });
+}
+
 }
